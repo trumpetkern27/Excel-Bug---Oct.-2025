@@ -22,16 +22,16 @@ I then proceeded to record and debug, looking at various window properties via W
 
 Another interesting thing was that the hWnd was the same every time I did the unload/refresh/load/refresh routine. This told me that it was probably not as severe of an error as I had thought, but I was determined to get to the bottom of this.
 
-I inspected other attributes, and the styles TTS_ALWAYSTIP, TTS_NOPREFIX, and WS_EX_TOPMOST were both enabled, which explained why it was showing up on difference sheets.
+I inspected other attributes, and the styles `TTS_ALWAYSTIP`, `TTS_NOPREFIX`, and `WS_EX_TOPMOST` were both enabled, which explained why it was showing up on difference sheets.
 
-I made a short tooltip log in VBA to show all the tooltips with their captions and styles, and the only style that changed was the WS_VISIBLE style (=10000000):
+I made a short tooltip log in VBA to show all the tooltips with their captions and styles, and the only style that changed was the `WS_VISIBLE` style (=10000000):
 
 | State   |   HWND  | Style  |
 |:-------:|:--------|:-------|
 |Hidden   |0x27308AA|84000003|
 |Visible  |0x27308AA|94000003|
 
-Interestingly enough, all the tooltips had the rightmost digit as 3, which indicates that all had both TTS_ALWAYSTIP and TTP_NOPREFIX. It also showed that there were 64 tooltips always, and looking at WinSpy confirmed this. It seems that these are preloaded, as none of them had a caption except for the ones that I expected to.
+Interestingly enough, all the tooltips had the rightmost digit as 3, which indicates that all had both `TTS_ALWAYSTIP` and `TTP_NOPREFIX`. It also showed that there were 64 tooltips always, and looking at WinSpy confirmed this. It seems that these are preloaded, as none of them had a caption except for the ones that I expected to.
 
 Of course, I do not have the source code. However, it appears that this is a harmless, though interesting, UI bug that is causing ghost tooltips. My estimation is that Excel preloads x tooltips, and if it gets overloaded, it might forget to unload one, and its properties get corrupted. This case study shows that much can be done to debug even without source code.
 
@@ -74,7 +74,7 @@ This bug is **not a security issue** (no evidence of UAF or memory corruption), 
 
 ## Videos & Code
 
-I’ve uploaded videos showing the bug in action, as well as the VBA logging scripts I used, to [GitHub](https://github.com/trumpetkern27/Excel-Bug---Oct.-2025).
+I’ve uploaded videos showing the bug in action, as well as the VBA logging scripts I used, to [GitHub](https://github.com/trumpetkern27/Excel-Bug---Oct.-2025) and [YouTube](https://www.youtube.com/watch?v=S68DbOfUNKg&list=PLpMrpYjdyJXbVQiY_3NwlpS4hv4Ahg6JP).
 
 ---
 
@@ -82,4 +82,4 @@ I’ve uploaded videos showing the bug in action, as well as the VBA logging scr
 
 I’ve also reported this issue to Microsoft through Excel’s built-in feedback system. As someone learning **C++ and WinAPI** and aiming to become a Software Engineer, I’d love to hear from the Excel team (or others) about this bug and any background they can share.
 
-*If you’ve seen similar issues in other Win32 apps, I’d love to hear your thoughts — drop me a comment on LinkedIn or message me through my [website](the-kern.com)!*
+*If you’ve seen similar issues in other Win32 apps, I’d love to hear your thoughts — drop me a comment on LinkedIn or message me through my [website](https://the-kern.com)!*
